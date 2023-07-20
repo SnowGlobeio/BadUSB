@@ -63,7 +63,6 @@ Select-String -Path *.xml -Pattern 'keyMaterial'>> $FileName;
 $AutoLoginPassword = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon" | Select-Object -Property "DefaultUserName","DefaultPassword"
 If (($AutoLoginPassword).DefaultPassword) {
   $AutoLoginPassword >> $FileName
-  #$Autlog >> $FileName
   }  # End If
 
 # Sysprep
@@ -71,7 +70,6 @@ $PassFiles = "C:\Windows\sysprep\sysprep.xml","C:\Windows\sysprep\sysprep.inf","
 ForEach ($PassFile in $PassFiles) {
   If (Test-Path -Path $PassFile) {
     $Syspass = Get-Content -Path $PassFile | Select-String -Pattern "Password"
-   # $Sysprep = "Sysprep password :" $Syspass
     $Syspass >> $Filename
   }  # End If
 }  # End ForEach
